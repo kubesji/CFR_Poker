@@ -28,67 +28,56 @@ Player has 5♠ and 7♣ in hand while there are 4♠, 6♦, 8♦, 10♦ and 10�
 
 The first step is to remove suits from card as they are not important for straights. Or are they? In this case, there are three diamond on the table, meaning other player can have flush (or even straight flush in this case). But rather than keeping suit for each card, we can add a flag *F* such as
 
-$$
-F = max \left( \sum_{c \in T} ♠(c), \sum_{c \in T} ♦(c), \sum_{c \in T} ♥(c), \sum_{c \in T} ♣(c) \right)
-
-$$
+$$F = max \left( 
+    \sum_{c \in T} ♠(c), 
+    \sum_{c \in T} ♦(c), 
+    \sum_{c \in T} ♥(c), 
+    \sum_{c \in T} ♣(c) 
+    \right)$$
 
 where *T* is set of all cards on table and function *♥(x)* is defined as
 
-$$
-♥(x) = \left\{ 
-  \begin{array}{ c l }
-    1 & \quad \textrm{if } F \in ♡ \\
+$$♥(x) = 
+  \begin{cases}
+    1 & \quad \textrm{if } F \in ♡\\
     0 & \quad \textrm{otherwise}
-  \end{array}
-\right. 
-$$
+  \end{cases}$$
+
 where ♡ is set of all cards having heart suit. Similar applies to other suit functions.
 
 Or, since we know danger of suit starts at 3 suited cards of the table, we can use boolean flag
-$$
-F_b =\left\{ 
-  \begin{array}{ c l }
-    True & \quad \textrm{if } F \geq 3 \\
-    False & \quad \textrm{otherwise}
-  \end{array}
-\right.
 
-$$
+$$F_b = \begin{cases}
+    True & \quad \textrm{if } F \geq 3 \\ 
+    False & \quad \textrm{otherwise} 
+  \end{cases}$$
 
 This leaves us with game state string as *"57-468TT-t"* where *t* is for True. This simple trick reduced number of states to explore by whopping 3456. Therefore, it is 3456 times faster to learn how to play if agent has a straight. But there is more.
 
 Next, there is 10 different ways to deal straight of the same value. We can try to reduce this. Simple way would be just to write *Straight8-TT-t* or even simpler *S8-TT-t* for memory efficiency. But this approach comes with information loss. Although agent doesn't need to know if it has 4 or 5 in hand but he needs to know if the highest card is on table or in its hand. Having the highest card in hand gives player higher chance of winning. Therefore, we can add another flag
-$$
-H_S = \left\{ 
-  \begin{array}{ c l }
-    True & \quad \textrm{if } \exists c \in H \text{ such as } c=max(S) \\
+
+$$H_S = \begin{cases}
+    True & \quad \textrm{if } \exists c \in H \text{ such as } c=max(S) \\ 
     False & \quad \textrm{otherwise}
-  \end{array}
-\right.
-$$
+  \end{cases}$$
+
 where *H* is set of cards in player's hand and *S* is set of card from straight combination. This flag could be expanded to numerical value 0, 1 or two denoting how many highest card player hold in hand. We'll stick with boolean for the sake of the example. Reduction in this case is only 5. But hey, still a great number. This leaves us with state string *S8-TT-tf* 
 
 The last thing we want to get rid of are two unused card which other players can use for their benefit, in this case two tens. There is 2070 possible combinations but we cannot just discard them. A pair on table means any player lucky enough can have a full house or even four of a kind. Thus, lacking this information would leave agent vunerable to this particular scenario no matter how unlikely it is. Since full house or four of a kind beating straight is very rare, agent would learn it is very likely to win with straight beating pairs or whatnot and it might place a high bet having no information about possible higher combination. Lets introduce a value that is a count of cards of the same value on the table that can be written as
-$$
-N_v = \sum_{c \in T} 1 - \left|sign(c-v)\right|
-$$
+
+$$N_v = \sum_{c \in T} 1 - \left|sign(c-v)\right|$$
+
 where $v \in V$ and V is set of all card values. From there, flags *P* and *ToK* can be defined as
-$$
-P = \left\{ 
-  \begin{array}{ c l }
-    True & \quad \textrm{if } \exists v \in V \text{ such as } N_v=2 \\
+
+$$P = \begin{cases}
+    True & \quad \textrm{if } \exists v \in V \text{ such as } N_v=2 \\ 
     False & \quad \textrm{otherwise}
-  \end{array}
-\right.
-,
-ToK = \left\{ 
-  \begin{array}{ c l }
-    True & \quad \textrm{if } \exists v \in V \text{ such as } N_v=3 \\
-    False & \quad \textrm{otherwise}
-  \end{array}
-\right.
-$$
+  \end{cases}
+  ,ToK =  \begin{cases}
+    True & \quad \textrm{if } \exists v \in V \text{ such as } N_v=3 \\ 
+    False & \quad \textrm{otherwise} 
+  \end{cases}$$
+
 Alternatively, flag *P* can have numerical values ${0, 1, 2}$ coresponding to number of pairs on table rather just a boolean flag. This reduces number of states by 517.5 or 346 to 4 or 6 respectivelly. All in all, we reduced state space nearly by nine million states and that's before we include any player moves.
 
 Similar approach can be taken to flag up to agent on flop and turn rounds that there might be better card combination coming for the agent by repeating shown algorithms and including cards from hand. This will result in higher state space but lower information loss which is always a trade-off we have to consider.
