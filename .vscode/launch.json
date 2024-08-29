@@ -1,0 +1,57 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+      {
+        "name": "PokerAI",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/bin/pokerAI",
+        "environment": [
+          {
+            "name": "config",
+            "value": "Debug"
+          }
+        ],
+        "cwd": "${workspaceFolder}"
+      },
+      {
+        "name": "testplay",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/bin/testplay",
+        "environment": [
+          {
+            "name": "config",
+            "value": "Debug"
+          }
+        ],
+        "cwd": "${workspaceFolder}"
+      },
+      {
+        "name": "parse_states",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/bin/parse_states",
+        "environment": [
+          {
+            "name": "config",
+            "value": "Debug"
+          }
+        ],
+        "cwd": "${workspaceFolder}"
+      },
+      {
+        "name": "test_various",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/bin/test",
+        "environment": [
+          {
+            "name": "config",
+            "value": "Debug"
+          }
+        ],
+        "cwd": "${workspaceFolder}"
+      },
+  ]
+}
