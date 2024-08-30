@@ -1,4 +1,4 @@
-# CFR_Poker
+# CFR Poker with external sampling
 
 My implementation of Monte Carlo Counterfactual Regret with external sampling algorithm to solve Texas Hold'em Poker.
 
@@ -12,7 +12,7 @@ Algorithm used is described [here](https://www.mlanctot.info/files/papers/PhD_Th
 
 ## State space
 
-Game state is composed of two parts: player's cards and history. Player's cards is set of cards in player's hand as well as on the table. History is list of actions taken by each player. Both parts can be massive in size, thus, some sort of compression or state space size reduction is needed. While reducing number of states in the most important thing here, it is also good to keep in mind there can easily be 10^9 states, thus, the shorter state string, the better for memory.
+Game state is composed of two parts: player's cards and history. Player's cards is set of cards in player's hand as well as on the table. History is list of actions taken by each player. Both parts can be massive in size, thus, some sort of compression or state space size reduction is needed. Even with all compression applied, game tree size in RAM for two player game is tens of GB. While reducing number of states in the most important thing here, it is also good to keep in mind there can easily be 10^9 states, thus, the shorter state string, the better for memory.
 
 ## Compressing player's hands
 
